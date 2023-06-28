@@ -27,9 +27,9 @@ function operate(num1, op, num2) {
     return add(num1, num2);
   }else if(op === '-'){
     return subtract(num1, num2);
-  }else if(op === '×'){
+  }else if(op === '×' || op === 'x' || op === '*'){
     return multiply(num1, num2);
-  }else if(op === '÷'){
+  }else if(op === '÷' || op === '/'){
     return divide(num1, num2);
   }else if(op === '%'){
     return divisible(num1, num2);
@@ -93,18 +93,20 @@ function displayOp() {
 const equalBtn = document.querySelector('.equal');
 
 equalBtn.addEventListener('click', () => {
-  result = operate(parseFloat(num1), op, parseFloat(num2));
-  roundedResult = parseFloat(result.toFixed(3));
-  upperDisplay.textContent = `${num1} ${op} ${num2} =`;
-  console.log(roundedResult);
-  if(!isFinite(roundedResult) || isNaN(roundedResult)){
-    lowerDisplay.textContent = 'MATH ERROR';
-  }else {
-    lowerDisplay.textContent = roundedResult;
+  if (num2 !== '') {
+    result = operate(parseFloat(num1), op, parseFloat(num2));
+    roundedResult = parseFloat(result.toFixed(3));
+    upperDisplay.textContent = `${num1} ${op} ${num2} =`;
+    console.log(roundedResult);
+    if(!isFinite(roundedResult) || isNaN(roundedResult)){
+      lowerDisplay.textContent = 'MATH ERROR';
+    }else {
+      lowerDisplay.textContent = roundedResult;
+    }
+    num1 = '';
+    num2 = '';
+    op = '';
   }
-  num1 = '';
-  num2 = '';
-  op = '';
 });
 
 const allClearBtn = document.querySelector('.allClear');
@@ -156,3 +158,107 @@ dotBtn.addEventListener('click', () => {
   }
   decimalEntered = true;
 });
+
+document.addEventListener('keydown', handleKeyDown);
+
+function handleKeyDown(event) {
+  const { key } = event;
+  //number keys
+  if(/[0-9]/.test(key)){
+    const number = parseInt(key);
+    handleNumberInput(number);
+    return;
+  }
+  //operator keys
+  if(['+', '-', '*', '/', '%', 'x'].includes(key)) {
+    handleOperatorInput(key);
+    return;
+  }
+  //equals sign
+  if(key === '=' || key === 'Enter'){
+    handleEqual();
+    return;
+  }
+  //AC key
+  if(key === 'Escape') {
+    handleAllClear();
+    return;
+  }
+  //clear Key
+  if(key === 'Backspace') {
+    handleClear();
+    return;
+  }
+}
+
+function handleNumberInput(number) {
+  if(op === ''){
+    num1 +=  number;
+    displayNum(num1);
+  }else{
+    num2 += number;
+    displayNum(num2);
+  }
+}
+
+function handleOperatorInput(operator) {
+  if(operator === 'x') {
+    operator = '×';
+  }else if(operator === '*') {
+    operator = '×';
+  }else if(operator === '/') {
+    operator = '÷';
+  }
+  if(op === ''){
+    if(lowerDisplay.textContent === ''){
+      num1 = '0';
+    }else{
+      num1 = lowerDisplay.textContent;
+    }
+    op = operator;
+    displayOp();
+  }else if(num2 !== '') {
+    result = operate(parseFloat(num1), op, parseFloat(num2));
+    num1 = result;
+    op = operator;
+    displayNum(num1);
+    displayOp();
+    num2 = '';
+  }else {
+    op = operator;
+    displayOp();
+  }
+}
+
+function handleEqual() {
+  if (num2 !== '') {
+    result = operate(parseFloat(num1), op, parseFloat(num2));
+    roundedResult = parseFloat(result.toFixed(3));
+    upperDisplay.textContent = `${num1} ${op} ${num2} =`;
+    console.log(roundedResult);
+    if(!isFinite(roundedResult) || isNaN(roundedResult)){
+      lowerDisplay.textContent = 'MATH ERROR';
+    }else {
+      lowerDisplay.textContent = roundedResult;
+    }
+    num1 = '';
+    num2 = '';
+    op = '';
+  }
+}
+
+function handleAllClear() {
+  clearDisplay();
+}
+
+function handleClear() {
+  if(lowerDisplay.textContent !== '') {
+    if(num2 === ''){
+      lowerDisplay.textContent = lowerDisplay.textContent.slice(0, -1);
+      num1 = lowerDisplay.textContent;
+    }else if(num2 !== ''){
+      lowerDisplay.textContent = lowerDisplay.textContent.slice(0, -1);
+      num2 = lowerDisplay.textContent;
+    }
+  }
+}
