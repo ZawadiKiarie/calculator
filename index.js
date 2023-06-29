@@ -61,6 +61,7 @@ function displayNum(num) {
 
 const opBtns = document.querySelectorAll('.op');
 let result = 0;
+let roundedResult;
 
 opBtns.forEach((opDiv) => {
   opDiv.addEventListener('click', () => {
@@ -74,7 +75,8 @@ opBtns.forEach((opDiv) => {
       displayOp();
     }else if(num2 !== '') {
       result = operate(parseFloat(num1), op, parseFloat(num2));
-      num1 = result;
+      roundedResult = parseFloat(result.toFixed(3));
+      num1 = roundedResult;
       op = opDiv.textContent;
       displayNum(num1);
       displayOp();
@@ -109,6 +111,32 @@ equalBtn.addEventListener('click', () => {
   }
 });
 
+
+const dotBtn = document.querySelector('.dot');
+dotBtn.addEventListener('click', () => {
+  const dot = '.';
+  
+  if (op === '') {
+    if(num1 === '') {
+      num1 = '0' + dot;
+      displayNum(num1);
+    }else if (!num1.includes(dot)) {
+      num1 += dot;
+      displayNum(num1);
+    }
+  } else {
+    if (!num2.includes(dot)) {
+      if (num2 === '') {
+        num2 = '0' + dot;
+      } else {
+        num2 += dot;
+      }
+      displayNum(num2);
+    }
+  }
+});
+
+
 const allClearBtn = document.querySelector('.allClear');
 
 allClearBtn.addEventListener('click', () => {
@@ -134,29 +162,6 @@ clearBtn.addEventListener('click', () => {
       num2 = lowerDisplay.textContent;
     }
   }
-});
-
-let decimalEntered = false;
-
-const dotBtn = document.querySelector('.dot');
-dotBtn.addEventListener('click', () => {
-  if(decimalEntered == false){
-    if(op === ''){
-      if(lowerDisplay.textContent === ''){
-        num1 = '0';
-        num1 += '.';
-        displayNum(num1);
-      }else{
-        num1 = lowerDisplay.textContent;
-        num1 += '.';
-        displayNum(num1);
-      }
-    }else {
-      num2 += '.';
-      displayNum(num2);
-    }
-  }
-  decimalEntered = true;
 });
 
 document.addEventListener('keydown', handleKeyDown);
@@ -189,6 +194,11 @@ function handleKeyDown(event) {
     handleClear();
     return;
   }
+  //dot
+  if(key === '.'){
+    handleDotInput();
+    return;
+  }
 }
 
 function handleNumberInput(number) {
@@ -219,13 +229,14 @@ function handleOperatorInput(operator) {
     displayOp();
   }else if(num2 !== '') {
     result = operate(parseFloat(num1), op, parseFloat(num2));
-    num1 = result;
+    roundedResult = parseFloat(result.toFixed(3));
+    num1 = roundedResult;
     op = operator;
     displayNum(num1);
     displayOp();
     num2 = '';
   }else {
-    op = operator;
+    op = opDiv.textContent;
     displayOp();
   }
 }
@@ -262,3 +273,69 @@ function handleClear() {
     }
   }
 }
+
+function handleDotInput() {
+  const dot = '.';
+  
+  if (op === '') {
+    if(num1 === '') {
+      num1 = '0' + dot;
+      displayNum(num1);
+    }else if (!num1.includes(dot)) {
+      num1 += dot;
+      displayNum(num1);
+    }
+  } else {
+    if (!num2.includes(dot)) {
+      if (num2 === '') {
+        num2 = '0' + dot;
+      } else {
+        num2 += dot;
+      }
+      displayNum(num2);
+    }
+  }
+}
+
+  // if(!num1.includes('.') || !num2.includes('.')){
+  //   if(op === ''){
+  //     if(lowerDisplay.textContent === ''){
+  //       num1 = '0';
+  //       num1 += '.';
+  //       displayNum(num1);
+  //     }else{
+  //       num1 = lowerDisplay.textContent;
+  //       num1 += '.';
+  //       displayNum(num1);
+  //     }
+  //   }else {
+  //     num2 += '.';
+  //     displayNum(num2);
+  //   }
+  // }
+
+
+  
+  // if(!num1.includes('.') || !num2.includes('.')){
+  //   if(op === ''){
+  //     if(lowerDisplay.textContent === ''){
+  //       num1 = '0';
+  //       num1 += '.';
+  //       displayNum(num1);
+  //     }else{
+  //       num1 = lowerDisplay.textContent;
+  //       num1 += '.';
+  //       displayNum(num1);
+  //     }
+  //   }else {
+  //     if(lowerDisplay.textContent === ''){
+  //       num2 = '0';
+  //       num2 += '.';
+  //       displayNum(num2);
+  //     }else{
+  //       num2 = lowerDisplay.textContent;
+  //       num2 += '.';
+  //       displayNum(num2);
+  //     }
+  //   }
+  // }
